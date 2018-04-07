@@ -57,8 +57,6 @@ public class MainActivity extends AppCompatActivity implements ITXLivePlayListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//强制竖屏
-
         powerManager = (PowerManager) this.getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
 
@@ -69,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements ITXLivePlayListen
         // 比例放大
         mCurrentRenderMode = TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION;
         // 不旋转
-        mCurrentRenderRotation = TXLiveConstants.RENDER_ROTATION_LANDSCAPE;
+        mCurrentRenderRotation = TXLiveConstants.RENDER_ROTATION_PORTRAIT;
 
         // 初始化配置
         mPlayConfig = new TXLivePlayConfig();
@@ -164,28 +162,25 @@ public class MainActivity extends AppCompatActivity implements ITXLivePlayListen
     @Override
     public void onResume() {
 
-        /**
-         * 设置为横屏
-         */
-        if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         super.onResume();
 
-        mLivePlayer.resume();
-
-        wakeLock.acquire();
+        if(mLivePlayer != null) {
+            mLivePlayer.resume();
+        }
+        if(wakeLock != null) {
+            wakeLock.acquire();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        mLivePlayer.pause();
-
-        wakeLock.release();
+        if(mLivePlayer != null) {
+            mLivePlayer.pause();
+        }
+        if(wakeLock != null) {
+            wakeLock.release();
+        }
     }
 }

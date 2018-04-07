@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.prohua.universal.UniversalAdapter;
 import com.prohua.universal.UniversalViewHolder;
@@ -48,6 +49,9 @@ public class MainActivity extends AppCompatActivity implements ITXLivePlayListen
 
     private List<String> stringList;
 
+    PowerManager powerManager = null;
+    PowerManager.WakeLock wakeLock = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements ITXLivePlayListen
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//强制竖屏
 
-        PowerManager powerManager = (PowerManager) this.getSystemService(POWER_SERVICE);
-        powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
+        powerManager = (PowerManager) this.getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
 
         initView();
     }
@@ -155,5 +159,33 @@ public class MainActivity extends AppCompatActivity implements ITXLivePlayListen
     @Override
     public void onNetStatus(Bundle bundle) {
 
+    }
+
+    @Override
+    public void onResume() {
+
+        /**
+         * 设置为横屏
+         */
+        if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        super.onResume();
+
+        mLivePlayer.resume();
+
+        wakeLock.acquire();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mLivePlayer.pause();
+
+        wakeLock.release();
     }
 }

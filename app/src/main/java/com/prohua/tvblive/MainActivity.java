@@ -128,6 +128,14 @@ public class MainActivity extends AppCompatActivity implements ITXLivePlayListen
         return true;
     }
 
+    private void stopPlay() {
+        if (mLivePlayer != null) {
+            mLivePlayer.stopRecord();
+            mLivePlayer.setPlayListener(null);
+            mLivePlayer.stopPlay(true);
+        }
+    }
+
     @Override
     public void onPlayEvent(int i, Bundle bundle) {
         Log.i("事件", "" + i);
@@ -182,5 +190,9 @@ public class MainActivity extends AppCompatActivity implements ITXLivePlayListen
         if(wakeLock != null) {
             wakeLock.release();
         }
+
+        stopPlay();
+
+        finish();
     }
 }

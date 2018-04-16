@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements ITXLivePlayListen
 
         powerManager = (PowerManager) this.getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
+        //这句
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         initView();
     }
